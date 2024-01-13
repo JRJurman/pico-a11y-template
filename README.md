@@ -1,9 +1,15 @@
 # pico-a11y-template
 Accessible HTML template for pico 8 games, with a live read out for screen readers.
 
+
+https://github.com/JRJurman/pico-a11y-template/assets/326557/078ba3b7-7960-4380-b231-0c01288da8f6
+
+
 ## Local Test
 You can test this locally by going to
 [https://jrjurman.com/pico-a11y-template/a11y_page.html](https://jrjurman.com/pico-a11y-template/a11y_page.html).
+
+Alternatively, you can clone this repo, and open the `a11y_page.html` with your browser.
 
 ## How To Use
 Include the following code in your pico 8 game
