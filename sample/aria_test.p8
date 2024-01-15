@@ -3,24 +3,45 @@ version 41
 __lua__
 gpio_addr = 0x5f80
 function aria(text)
+  -- clear previous text
+  for i = 0x5f80,0x5fff do
+    poke(i, 0)
+  end 
+  
+  -- set gpio with new text
   for i = 0, #text do
     local char = ord(text, i)
 
     local addr = gpio_addr + i
     poke(addr, char)
   end
-  print(text)
 end
 
 function _init()
+  cls()
+  print([[to see the accessible read out,
+  load the html page]])
+  aria([[
+  welcome to the a11y sample project for pico-8.
+  press x or z to see the read out update.
+  ]])
+end
+
+function _draw()
 end
 
 function _update()
-  if (btn(❎)) aria("x button pressed")
-  if (btn(🅾️)) aria("o button pressed")
+  -- handle pause button
+  if (btn(6)) then
+    aria("you've entered the pause menu, read out is not available yet, press p or enter to leave") 
+  end
+  
+  -- if they press x or o, read out
+  if (btnp(❎)) aria("x button pressed")
+  if (btnp(🅾️)) aria("o button pressed")
 end
 
-aria("hello world")
+
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -157,3 +178,4 @@ __label__
 82888828828282888888888288288828828288888888888888888888888888888888888888888888888888888888888288828828828288288882828888888888
 82228222828282228888888282888222822288888888888888888888888888888888888888888888888888888888822282228288822282228882822288822288
 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
+
