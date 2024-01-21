@@ -991,7 +991,7 @@ canvas{
 
 .p8_start_button{
 	cursor:pointer;
-	-repeat center;
+	-repeat: center;
 	-webkit-background-size:cover; -moz-background-size:cover; -o-background-size:cover; background-size:cover;
 }
 
@@ -1131,23 +1131,53 @@ canvas{
 </div>
 
 <script>
-function onFrameUpdate() {
-	// read the GPIO for text
-	const readout = pico8_gpio.filter(charCode => charCode >= 32 && charCode <= 127).map(charCode => String.fromCharCode(charCode))
+	const readAddress = 125
+	const pageAddress = 126
+	const lastAddress = 127
 
-	// update the aria live area
-	const readoutElement = document.querySelector('div[pico-readout]')
-	readoutElement.textContent = readout.join('')
+	let a11yText = ""
 
-	// queue this function to run again (when the next animation frame is available)
-	// this queuing should help prevent overwhelming the browser with requests
-	setTimeout(() => {
-		window.requestAnimationFrame(onFrameUpdate);
-	}, 0);
-}
+	function onFrameUpdate() {
+		// load variables to determine what segment of text to load
+		const pageValue = pico8_gpio[pageAddress]
+		const readValue = pico8_gpio[readAddress]
+		const lastValue = pico8_gpio[lastAddress]
 
-onFrameUpdate()
-</script>
+		// if we haven't read this text, read it now
+		if (readValue === 0) {
+			console.log({pageValue, readValue}, 'reading')
+
+			// read the GPIO for text
+			const readout = pico8_gpio.filter(charCode => charCode >= 32 && charCode <= 127).map(charCode => String.fromCharCode(charCode))
+			console.log({readout})
+
+			// get the element to put the text in
+			const readoutElement = document.querySelector('div[pico-readout]')
+
+			// if this is the first page, reset the text, otherwise we'll just append to it
+			if (pageValue == 0) {
+				a11yText = ""
+			}
+			a11yText += readout.join('')
+
+			// if this is the last page, load it into our element
+			if (pageValue == lastValue) {
+				readoutElement.textContent = a11yText
+			}
+
+			// update read counter (so pico8 knows to update the page)
+			pico8_gpio[readAddress] = 1
+		}
+
+		// queue this function to run again (when the next animation frame is available)
+		// this queuing should help prevent overwhelming the browser with requests
+		setTimeout(() => {
+			window.requestAnimationFrame(onFrameUpdate);
+		}, 0);
+	}
+
+	onFrameUpdate()
+	</script>
 
 
 </div> <!-- body_0 -->

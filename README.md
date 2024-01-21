@@ -10,40 +10,43 @@ You can test this locally by going to
 Alternatively, you can clone this repo, and open the `a11y_page.html` with your browser.
 
 ## How To Use
-Include the following code in your pico 8 game
+Copy the code in the second tab from `aria_test.p8` into your project (if you are viewing the file directly, search for `-- pico-8 a11y template`). That will give you access to the API, and when loaded in the `a11y_page.html`, will show text to screen readers.
+
+## PICO-8 API
+
+### `set_sr_text(text)`
+`set_sr_text` will tell PICO-8 to load the `text` in a way that screen readers will announce the text.
+The text can be any length (although some screen readers will stop at a certain point, be sure to test!).
+
+You only need to call this function once, it is recommended to do this on a user taking an action, or something happening in the game (although, do not make assumptions about how slow or fast the user's screen reader is).
+
 ```lua
-gpio_addr = 0x5f80
-function aria(text)
-  for i = 0, #text do
-    local char = ord(text, i)
-    local addr = gpio_addr + i
-    poke(addr, char)
-  end
-  print(text)
+if (btnp(🅾️)) then
+    counter = 0
+    set_sr_text("counter reset")
 end
 ```
 
-Then, anywhere in your game where you would like to have screen-readable text,
-call the `aria` function.
+### `update_sr()` and `handle_pause_sr()`
+`update_sr` and `handle_pause_sr` are functions to update the screen reader as part of the update function.
+
+`update_sr` will handle presenting multiple pages of text (which get calculated automatically).
+
+`handle_pause_sr` will allow the page to write to the screen reader when the pause menu launches. While the menu itself is not accessible, this allows us to write a custom message that explains that a menu has been launched, and how to leave the menu.
+
+Both of these functions should be included at the end of the `_update` function.
 
 ```lua
-aria("we hope you enjoy this game")
+function _update()
+
+  -- your game logic ...
+
+  update_sr()
+  handle_pause_sr()
+end
 ```
 
-You'll need to export your game for HTML
-```
-export your_game_name.html
-```
-
-Then, update the included `a11y_page.html` template to point to the generated
-game JS file (this is set on line 14 of the HTML template). This path will need
- to point either relatively or directly to where your carts are saved (you can
- run `FOLDER` in pico 8 to find this path).
-```js
-window.cart_source = "/Users/jrjurman/Library/Application Support/pico-8/carts/aria_test.js"
-```
-
-## Changes Made
+## HTML Changes Made
 The provided `a11y_page.html` template is a modified version of the default
 template that is generated when running `export`. Below is a list of changes
 made to the template.

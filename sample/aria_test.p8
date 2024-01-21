@@ -1,47 +1,134 @@
 pico-8 cartridge // http://www.pico-8.com
 version 41
 __lua__
-gpio_addr = 0x5f80
-function aria(text)
-  -- clear previous text
-  for i = 0x5f80,0x5fff do
-    poke(i, 0)
-  end 
-  
-  -- set gpio with new text
-  for i = 0, #text do
-    local char = ord(text, i)
-
-    local addr = gpio_addr + i
-    poke(addr, char)
-  end
-end
+-- a11y-template main
+-- see second page for functions
+-- see the github page for full documentation
 
 function _init()
-  cls()
-  print([[to see the accessible read out,
-  load the html page]])
-  aria([[
-  welcome to the a11y sample project for pico-8.
-  press x or z to see the read out update.
-  ]])
-end
-
-function _draw()
+  set_sr_text("simple example for pico a11y template, counter at 0, press x to increment, o to reset, or direction buttons. check out the github page for all the documentation and details.")
+  
+  -- simple counter example, because that is easy
+  counter = 0
 end
 
 function _update()
-  -- handle pause button
-  if (btn(6)) then
-    aria("you've entered the pause menu, read out is not available yet, press p or enter to leave") 
+  if (btnp(❎)) counter = counter + 1
+  if (btnp(⬅️)) counter = counter - 5
+  if (btnp(➡️)) counter = counter + 5
+  if (btnp(⬆️)) counter = counter + 1
+  if (btnp(⬇️)) counter = counter - 1
+
+  if (btn(❎) or btn(⬅️) or btn(➡️) or btn(⬆️) or btn(⬇️)) then
+    set_sr_text("" .. counter)
   end
-  
-  -- if they press x or o, read out
-  if (btnp(❎)) aria("x button pressed")
-  if (btnp(🅾️)) aria("o button pressed")
+
+	 if (btnp(🅾️)) then 
+	   counter = 0
+	   set_sr_text("counter reset")
+  end
+		
+		
+  update_sr()
+  handle_pause_sr()
 end
 
+function _draw()
+  cls()
+  map()
+  
+  print("counter ".. counter, 50, 20)
+end
+-->8
+-- pico-8 a11y template
 
+-- this file contains functions
+-- to interface with a webpage
+-- and present text for screen
+-- readers.
+-- read more at https://github.com/jrjurman/pico-a11y-template
+
+-- gpio addresses
+a11y_start = 0x5f80
+a11y_page_size = 128 - 4
+a11y_end  = a11y_start + a11y_page_size
+-- has the window read the page? 0 or 1
+a11y_read = a11y_end + 1
+-- what page are we on?
+a11y_page = a11y_end + 2
+-- what is the last page?
+a11y_last = a11y_end + 3
+
+-- full text to read out
+a11y_text = ""
+
+-- update screen reader function
+-- this should be called at the
+-- end of your update function
+function update_sr()
+  -- get current page
+  local has_read_page = peek(a11y_read) == 1
+  local page = peek(a11y_page)
+  local last_page = peek(a11y_last)
+
+  -- if we have read this page (and there are more)
+  -- reset the read counter, and update the page
+  if (has_read_page and page < last_page) then
+    page = page + 1
+    poke(a11y_read, 0)
+    poke(a11y_page, page)
+  end
+  
+  if (page <= last_page) then
+   -- clear previous text
+   for i = a11y_start,a11y_end do
+     poke(i, 0)
+   end
+   
+	  -- load the text for this page
+	  local text_start = a11y_page_size * page
+	  local text_end = a11y_page_size * (page + 1)
+	  for i = 1, a11y_page_size do
+	    local char = ord(a11y_text, i + text_start)
+	    local addr = a11y_start + i
+	    poke(addr, char)
+	  end
+  end
+end
+
+function set_sr_text(text)
+  -- set text and page variables
+  a11y_text = text
+  local page_size = (#text/a11y_page_size)
+
+  -- reset counters and set values
+  poke(a11y_read, 0)
+  poke(a11y_page, 0)
+  poke(a11y_last, page_size)
+
+		-- run update_sr to populate the text
+  update_sr()
+end
+
+-- handle pause button
+-- since this menu is not accessible
+pre_paused_text = ""
+function handle_pause_sr()
+  -- first, check if we have pre_paused_text
+  -- this is the text before pausing
+  -- this will also be true right after pause menu is closed
+  if (pre_paused_text != "") then
+    set_sr_text(pre_paused_text)
+    pre_paused_text = ""
+  end
+  
+  -- then, if we just paused, update the menu text
+  -- and save the existing a11y text (to load later)
+  if (btn(6)) then
+    pre_paused_text = a11y_text
+    set_sr_text("you've entered the pause menu, read out is not available yet, press p or enter to leave")
+  end
+end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
