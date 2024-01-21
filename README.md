@@ -1,7 +1,7 @@
 # pico-a11y-template
 Accessible HTML template for pico 8 games, with a live read out for screen readers.
 
-<video src="./sample_video.mov" width="720px"></video>
+https://github.com/JRJurman/pico-a11y-template/assets/326557/6a5cc45e-f142-4b4d-a0dc-cd9c956b64c0
 
 ## Local Test
 You can test this locally by going to
