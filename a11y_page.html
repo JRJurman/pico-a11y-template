@@ -1011,6 +1011,29 @@ canvas{
 }
 </STYLE>
 
+<!-- accessibility styling -->
+
+<!-- include Atkinson Hyperlegible font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap" rel="stylesheet">
+
+<style>
+	/* set window to be split into left right columns of equal size */
+	#body_0 {
+		display:grid;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	/* make font large, and use atkinson hyperlegible font */
+	[pico-readout] {
+		font-family: "Atkinson Hyperlegible", sans-serif;
+		font-size: 3em;
+	}
+</style>
+
+<!-- end accessibility styling -->
+
 </head>
 
 <body style="padding:0px; margin:0px; background-color:#222; color:#ccc">
@@ -1020,7 +1043,7 @@ canvas{
 <!-- Add any content above the cart here -->
 
 
-<div id="p8_frame_0" style="max-width:800px; max-height:800px; margin:auto;"> <!-- double function: limit size, and display only this div for touch devices -->
+<div id="p8_frame_0" style="max-width:800px; max-height:800px;"> <!-- double function: limit size, and display only this div for touch devices -->
 <div id="p8_frame" style="display:flex; width:100%; max-width:95vw; aspect-ratio: 1/1; max-height:95vh; margin:auto;">
 
 	<div id="p8_menu_buttons_touch" style="position:absolute; width:100%; z-index:10; left:0px;">
