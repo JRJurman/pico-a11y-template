@@ -1,13 +1,14 @@
 pico-8 cartridge // http://www.pico-8.com
 version 41
 __lua__
+
 -- a11y-template main
 -- see second page for functions
 -- see the github page for full documentation
 
 function _init()
   set_sr_text("simple example for pico a11y template, counter at 0, press x to increment, o to reset, or direction buttons. check out the github page for all the documentation and details.")
-  
+
   -- simple counter example, because that is easy
   counter = 0
 end
@@ -18,17 +19,15 @@ function _update()
   if (btnp(➡️)) counter = counter + 5
   if (btnp(⬆️)) counter = counter + 1
   if (btnp(⬇️)) counter = counter - 1
-
-  if (btn(❎) or btn(⬅️) or btn(➡️) or btn(⬆️) or btn(⬇️)) then
+  if btn(❎) or btn(⬅️) or btn(➡️) or btn(⬆️) or btn(⬇️) then
     set_sr_text("" .. counter)
   end
 
-	 if (btnp(🅾️)) then 
-	   counter = 0
-	   set_sr_text("counter reset")
+  if btnp(🅾️) then
+    counter = 0
+    set_sr_text("counter reset")
   end
-		
-		
+
   update_sr()
   handle_pause_sr()
 end
@@ -36,8 +35,8 @@ end
 function _draw()
   cls()
   map()
-  
-  print("counter ".. counter, 50, 20)
+
+  print("counter " .. counter, 50, 20)
 end
 -->8
 -- pico-8 a11y template
@@ -51,7 +50,7 @@ end
 -- gpio addresses
 a11y_start = 0x5f80
 a11y_page_size = 128 - 4
-a11y_end  = a11y_start + a11y_page_size
+a11y_end = a11y_start + a11y_page_size
 -- has the window read the page? 0 or 1
 a11y_read = a11y_end + 1
 -- what page are we on?
@@ -73,40 +72,39 @@ function update_sr()
 
   -- if we have read this page (and there are more)
   -- reset the read counter, and update the page
-  if (has_read_page and page < last_page) then
+  if has_read_page and page < last_page then
     page = page + 1
     poke(a11y_read, 0)
     poke(a11y_page, page)
   end
-  
-  if (page <= last_page) then
-   -- clear previous text
-   for i = a11y_start,a11y_end do
-     poke(i, 0)
-   end
-   
-	  -- load the text for this page
-	  local text_start = a11y_page_size * page
-	  local text_end = a11y_page_size * (page + 1)
-	  for i = 1, a11y_page_size do
-	    local char = ord(a11y_text, i + text_start)
-	    local addr = a11y_start + i
-	    poke(addr, char)
-	  end
+
+  if page <= last_page then
+    -- clear previous text
+    for i = a11y_start, a11y_end do
+      poke(i, 0)
+    end
+
+    -- load the text for this page
+    local text_start = a11y_page_size * page
+    for i = 1, a11y_page_size do
+      local char = ord(a11y_text, i + text_start)
+      local addr = a11y_start + i
+      poke(addr, char)
+    end
   end
 end
 
 function set_sr_text(text)
   -- set text and page variables
   a11y_text = text
-  local page_size = (#text/a11y_page_size)
+  local page_size = #text / a11y_page_size
 
   -- reset counters and set values
   poke(a11y_read, 0)
   poke(a11y_page, 0)
   poke(a11y_last, page_size)
 
-		-- run update_sr to populate the text
+  -- run update_sr to populate the text
   update_sr()
 end
 
@@ -117,18 +115,19 @@ function handle_pause_sr()
   -- first, check if we have pre_paused_text
   -- this is the text before pausing
   -- this will also be true right after pause menu is closed
-  if (pre_paused_text != "") then
+  if pre_paused_text != "" then
     set_sr_text(pre_paused_text)
     pre_paused_text = ""
   end
-  
+
   -- then, if we just paused, update the menu text
   -- and save the existing a11y text (to load later)
-  if (btn(6)) then
+  if btn(6) then
     pre_paused_text = a11y_text
     set_sr_text("you've entered the pause menu, read out is not available yet, press p or enter to leave")
   end
 end
+
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -265,4 +264,3 @@ __label__
 82888828828282888888888288288828828288888888888888888888888888888888888888888888888888888888888288828828828288288882828888888888
 82228222828282228888888282888222822288888888888888888888888888888888888888888888888888888888822282228288822282228882822288822288
 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
-
