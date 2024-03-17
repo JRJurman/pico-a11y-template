@@ -10,13 +10,15 @@ You can test this locally by going to
 Alternatively, you can clone this repo, and open the `a11y_page.html` with your browser.
 
 ## How To Use
-Copy the code in the second tab from `aria_test.p8` into your project (if you are viewing the file directly, search for `-- pico-8 a11y template`). That will give you access to the API, and when loaded in the `a11y_page.html`, will show text to screen readers.
+Copy the code in the second tab from `sample/aria_test.p8` into your project (if you are viewing the file directly, search for `-- pico-8 a11y template`). That will give you access to the API, and when loaded in the `a11y_page.html`, will show text to screen readers.
+
+You can also grab the minified version from `sample/aria_test.min.p8`, in that file, all other code has been removed, and you can copy it directly into your project.
 
 ## PICO-8 API
 
 ### `set_sr_text(text)`
 `set_sr_text` will tell PICO-8 to load the `text` in a way that screen readers will announce the text.
-The text can be any length (although some screen readers will stop at a certain point, be sure to test!).
+The text can be any length. You can preview the results if you have a terminal open (it uses the `printh` function to write out to the terminal).
 
 You only need to call this function once, it is recommended to do this on a user taking an action, or something happening in the game (although, do not make assumptions about how slow or fast the user's screen reader is).
 
@@ -70,3 +72,20 @@ the top, so that it is easy for developers to set and update these properties.
 I'm admittedly very new to accessibility, and even more so when it comes to
 game dev, so please make issues and feel free to contribute with PRs if there
 are any improvements that can be made here!
+
+## Linting and Minification
+
+This project uses [shrinko8](https://github.com/thisismypassport/shrinko8) for linting and minification.
+To use this, clone the project, and from that directory run the following commands:
+
+For linting:
+```sh
+python shrinko8.py ../pico-a11y/sample/aria_test.p8 --lint
+```
+
+For minification:
+```sh
+python shrinko8.py ../pico-a11y/sample/aria_test.p8 ../pico-a11y/sample/aria_test.min.p8 --minify-safe-only --no-minify-rename
+```
+
+Then delete all the code before `a11y_start=24448`.
