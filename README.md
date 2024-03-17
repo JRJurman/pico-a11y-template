@@ -10,9 +10,7 @@ You can test this locally by going to
 Alternatively, you can clone this repo, and open the `a11y_page.html` with your browser.
 
 ## How To Use
-Copy the code in the second tab from `sample/aria_test.p8` into your project (if you are viewing the file directly, search for `-- pico-8 a11y template`). That will give you access to the API, and when loaded in the `a11y_page.html`, will show text to screen readers.
-
-You can also grab the minified version from `sample/aria_test.min.p8`, in that file, all other code has been removed, and you can copy it directly into your project.
+Copy the code from `a11y_code.lua` or `a11y_code.min.lua` into your project. That will give you access to the API, and when loaded in the `a11y_page.html`, will show text to screen readers.
 
 ## PICO-8 API
 
@@ -80,12 +78,12 @@ To use this, clone the project, and from that directory run the following comman
 
 For linting:
 ```sh
-python shrinko8.py ../pico-a11y/sample/aria_test.p8 --lint
+python shrinko8.py ../pico-a11y/a11y_code.lua --lint
 ```
 
 For minification:
 ```sh
-python shrinko8.py ../pico-a11y/sample/aria_test.p8 ../pico-a11y/sample/aria_test.min.p8 --minify-safe-only --no-minify-rename
+python shrinko8.py ../pico-a11y/a11y_code.lua ../pico-a11y/a11y_code.min.lua --minify-safe-only --no-minify-rename
 ```
 
 Then delete all the code before `a11y_start=24448`.

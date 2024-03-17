@@ -1,0 +1,5 @@
+a11y_start=24448a11y_page_size=128-4a11y_end=a11y_start+a11y_page_size a11y_read=a11y_end+1a11y_page=a11y_end+2a11y_last=a11y_end+3a11y_text=""function update_sr()local has_read_page,page,last_page=peek(a11y_read)==1,peek(a11y_page),peek(a11y_last)if(has_read_page and page<last_page)page=page+1poke(a11y_read,0)poke(a11y_page,page)
+if(page<=last_page)for i=a11y_start,a11y_end do poke(i,0)end local text_start=a11y_page_size*page for i=1,a11y_page_size do local char,addr=ord(a11y_text,i+text_start),a11y_start+i poke(addr,char)end
+end function set_sr_text(text)printh("sr:"..text.."\n")a11y_text=text local page_size=#text/a11y_page_size poke(a11y_read,0)poke(a11y_page,0)poke(a11y_last,page_size)update_sr()end pre_paused_text=""function handle_pause_sr()if(pre_paused_text~="")set_sr_text(pre_paused_text)pre_paused_text=""
+if(btn(6))pre_paused_text=a11y_text set_sr_text"you've entered the pause menu, read out is not available yet, press p or enter to leave"
+end
