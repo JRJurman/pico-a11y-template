@@ -1169,11 +1169,8 @@ canvas{
 
 		// if we haven't read this text, read it now
 		if (readValue === 0) {
-			console.log({pageValue, readValue}, 'reading')
-
 			// read the GPIO for text
 			const readout = pico8_gpio.filter(charCode => charCode >= 32 && charCode <= 127).map(charCode => String.fromCharCode(charCode))
-			console.log({readout})
 
 			// get the element to put the text in
 			const readoutElement = document.querySelector('div[pico-readout]')
