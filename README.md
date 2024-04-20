@@ -1,4 +1,7 @@
 # pico-a11y-template
+
+<img src="./logo.png" width="200px" alt="pico-a11y-template logo, minimalistic icon of a speech bubble with sound waves inside">
+
 Accessible HTML template for pico 8 games, with a live read out for screen readers.
 
 https://github.com/JRJurman/pico-a11y-template/assets/326557/6a5cc45e-f142-4b4d-a0dc-cd9c956b64c0
